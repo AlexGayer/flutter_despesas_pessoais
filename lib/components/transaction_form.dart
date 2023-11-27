@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class TransactionForm extends StatefulWidget {
-  final void Function(String, double) onSubmmit;
+  final void Function(String, double, DateTime) onSubmmit;
   const TransactionForm({super.key, required this.onSubmmit});
 
   @override
@@ -9,9 +10,9 @@ class TransactionForm extends StatefulWidget {
 }
 
 class _TransactionFormState extends State<TransactionForm> {
-  final titleController = TextEditingController();
-
-  final priceController = TextEditingController();
+  final _titleController = TextEditingController();
+  final _priceController = TextEditingController();
+  DateTime? _selectedDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -22,24 +23,43 @@ class _TransactionFormState extends State<TransactionForm> {
         child: Column(
           children: [
             TextField(
-              controller: titleController,
+              controller: _titleController,
               onSubmitted: (value) => _submitForm(),
               decoration: const InputDecoration(labelText: "Título"),
             ),
             TextField(
-              controller: priceController,
+              controller: _priceController,
               decoration: const InputDecoration(labelText: "Valor (R\$)"),
               onSubmitted: (value) => _submitForm(),
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
             ),
+            Container(
+              height: 70,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    _selectedDate == null ? "Nenhuma Data selecionada" : DateFormat("dd/MM/yyyy").format(_selectedDate!),
+                  ),
+                  TextButton(
+                    onPressed: _showDatePicker,
+                    child: const Text(
+                      "Selecionar Data",
+                      style: TextStyle(color: Colors.purple),
+                    ),
+                  )
+                ],
+              ),
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                TextButton(
+                ElevatedButton(
+                    style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).primaryColor),
                     onPressed: () => _submitForm(),
-                    child: const Text(
+                    child: Text(
                       "Nova Transação",
-                      style: TextStyle(color: Colors.purple),
+                      style: TextStyle(color: Theme.of(context).textTheme.labelLarge!.color),
                     )),
               ],
             )
@@ -50,12 +70,29 @@ class _TransactionFormState extends State<TransactionForm> {
   }
 
   _submitForm() {
-    final title = titleController.text;
-    final price = double.tryParse(priceController.text) ?? 0.0;
+    final title = _titleController.text;
+    final price = double.tryParse(_priceController.text) ?? 0.0;
+    final date = _selectedDate;
 
-    if (title.isEmpty || price <= 0) {
+    if (title.isEmpty || price <= 0 || date == null) {
       return;
     }
-    widget.onSubmmit(title, price);
+    widget.onSubmmit(title, price, date);
+  }
+
+  _showDatePicker() {
+    showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
+    ).then((pickedDate) {
+      if (pickedDate == null) {
+        return;
+      }
+      setState(() {
+        _selectedDate = pickedDate;
+      });
+    });
   }
 }

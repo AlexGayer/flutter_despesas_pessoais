@@ -20,18 +20,34 @@ class _HomePageState extends State<HomePage> {
     showModalBottomSheet(context: context, builder: (_) => TransactionForm(onSubmmit: _addTransaction));
   }
 
-  _addTransaction(String title, double price) {
+  List<Transaction> get _recentTransactions {
+    return _transactions
+        .where(
+          (tr) => tr.data.isAfter(
+            DateTime.now().subtract(const Duration(days: 7)),
+          ),
+        )
+        .toList();
+  }
+
+  _addTransaction(String title, double price, DateTime date) {
     final newTransaction = Transaction(
       id: Random().nextDouble().toString(),
       title: title,
       value: price,
-      data: DateTime.now(),
+      data: date,
     );
     setState(() {
       _transactions.add(newTransaction);
     });
 
     Navigator.of(context).pop();
+  }
+
+  _removeTransaction(String id) {
+    setState(() {
+      _transactions.removeWhere((tr) => tr.id == id);
+    });
   }
 
   @override
@@ -44,8 +60,11 @@ class _HomePageState extends State<HomePage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Chart(),
-            TransactionList(transactions: _transactions),
+            Chart(recentTransactions: _recentTransactions),
+            TransactionList(
+              transactions: _transactions,
+              removeTransaction: _removeTransaction,
+            ),
           ],
         ),
       ),
