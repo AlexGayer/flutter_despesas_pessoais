@@ -12,22 +12,24 @@ class TransactionList extends StatelessWidget {
   Widget build(BuildContext context) {
     return transactions.isEmpty
         ? Center(
-            child: Column(
-              children: [
-                const SizedBox(height: 20),
-                Text(
-                  "Nenhuma transação Cadastrada",
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 20),
-                SizedBox(
-                  height: 300,
-                  child: Image.asset(
-                    'assets/images/waiting.png',
-                    fit: BoxFit.cover,
+            child: LayoutBuilder(
+              builder: (context, constraints) => Column(
+                children: [
+                  SizedBox(height: constraints.maxHeight * 0.05),
+                  Text(
+                    "Nenhuma transação Cadastrada",
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
-                )
-              ],
+                  SizedBox(height: constraints.maxHeight * 0.05),
+                  SizedBox(
+                    height: constraints.maxHeight * 0.6,
+                    child: Image.asset(
+                      'assets/images/waiting.png',
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                ],
+              ),
             ),
           )
         : ListView.builder(
@@ -39,12 +41,23 @@ class TransactionList extends StatelessWidget {
                 elevation: 5,
                 margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
                 child: ListTile(
-                  trailing: IconButton(
-                      onPressed: () => removeTransaction(tr.id),
-                      icon: Icon(
-                        Icons.delete,
-                        color: Theme.of(context).colorScheme.error,
-                      )),
+                  trailing: MediaQuery.of(context).size.width > 490
+                      ? TextButton.icon(
+                          onPressed: () => removeTransaction(tr.id),
+                          icon: Icon(
+                            Icons.delete,
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                          label: Text(
+                            "Deletar",
+                            style: TextStyle(color: Theme.of(context).colorScheme.error),
+                          ))
+                      : IconButton(
+                          onPressed: () => removeTransaction(tr.id),
+                          icon: Icon(
+                            Icons.delete,
+                            color: Theme.of(context).colorScheme.error,
+                          )),
                   leading: CircleAvatar(
                     radius: 30,
                     child: Padding(

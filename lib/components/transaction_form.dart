@@ -16,54 +16,56 @@ class _TransactionFormState extends State<TransactionForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 5,
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _titleController,
-              onSubmitted: (value) => _submitForm(),
-              decoration: const InputDecoration(labelText: "Título"),
-            ),
-            TextField(
-              controller: _priceController,
-              decoration: const InputDecoration(labelText: "Valor (R\$)"),
-              onSubmitted: (value) => _submitForm(),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            ),
-            Container(
-              height: 70,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    _selectedDate == null ? "Nenhuma Data selecionada" : DateFormat("dd/MM/yyyy").format(_selectedDate!),
-                  ),
-                  TextButton(
-                    onPressed: _showDatePicker,
-                    child: const Text(
-                      "Selecionar Data",
-                      style: TextStyle(color: Colors.purple),
-                    ),
-                  )
-                ],
+    return SingleChildScrollView(
+      child: Card(
+        elevation: 5,
+        child: Padding(
+          padding: EdgeInsets.only(top: 10.0, right: 10, left: 10, bottom: 10 + MediaQuery.of(context).viewInsets.bottom),
+          child: Column(
+            children: [
+              TextField(
+                controller: _titleController,
+                onSubmitted: (value) => _submitForm(),
+                decoration: const InputDecoration(labelText: "Título"),
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ElevatedButton(
-                    style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).primaryColor),
-                    onPressed: () => _submitForm(),
-                    child: Text(
-                      "Nova Transação",
-                      style: TextStyle(color: Theme.of(context).textTheme.labelLarge!.color),
-                    )),
-              ],
-            )
-          ],
+              TextField(
+                controller: _priceController,
+                decoration: const InputDecoration(labelText: "Valor (R\$)"),
+                onSubmitted: (value) => _submitForm(),
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              ),
+              SizedBox(
+                height: 70,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      _selectedDate == null ? "Nenhuma Data selecionada" : DateFormat("dd/MM/yyyy").format(_selectedDate!),
+                    ),
+                    TextButton(
+                      onPressed: _showDatePicker,
+                      child: const Text(
+                        "Selecionar Data",
+                        style: TextStyle(color: Colors.purple),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).primaryColor),
+                      onPressed: () => _submitForm(),
+                      child: Text(
+                        "Nova Transação",
+                        style: TextStyle(color: Theme.of(context).textTheme.labelLarge!.color),
+                      )),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
